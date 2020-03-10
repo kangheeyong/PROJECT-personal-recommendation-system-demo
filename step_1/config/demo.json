@@ -1,0 +1,15 @@
+{
+    "demo_app": {
+        "base":{
+            "host": "0.0.0.0",
+            "port": 8000,
+            "websocket_route": "/feed"
+        },
+        "sleep_t": 60
+    },
+    "demo_user":{
+        "url": "ws://localhost:8000/feed",
+        "sleep_t": 15,
+        "waiting_t": 15
+    }
+}
