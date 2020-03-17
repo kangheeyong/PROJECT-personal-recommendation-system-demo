@@ -46,7 +46,8 @@ class Demo_user():
                 await self.ws.send(json.dumps(dic_msg))
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
-                sys.exit(1)
+                break
+                # sys.exit(1)
             # finishing
             sleep_t = max(0, self.opt.demo_user.sleep_t - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
@@ -61,13 +62,15 @@ class Demo_user():
                 print(message)
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
-                sys.exit(1)
+                break
+                # sys.exit(1)
             # finishing
 
     async def _main(self):
         self.logger.info('Start...')
         while True:
             try:
+                self._data_load()
                 self.ws = await websockets.connect(self.url)
                 await asyncio.gather(
                     self._producer(),
@@ -89,7 +92,6 @@ class Demo_user():
         self._p_user = demo_user['p_user']
 
     def run(self):
-        self._data_load()
         asyncio.run(self._main())
 
 
