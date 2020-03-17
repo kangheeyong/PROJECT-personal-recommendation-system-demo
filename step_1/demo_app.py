@@ -1,5 +1,6 @@
 import sys
 import time
+from collections import defaultdict
 
 import json
 import asyncio
@@ -9,6 +10,7 @@ from sanic import Sanic
 from Feynman.cloud import Google_drive
 from Feynman.serialize import Pickle_serializer
 from Feynman.etc.util import Config, get_logger
+from Feynman.database import Kafka_queue_producer
 
 
 app = Sanic('Demo_app')
@@ -20,6 +22,7 @@ class Demo_app():
         self.opt = Config(open('config/demo.json').read())
         self.gd = Google_drive('token.pickle')
         self.ps = Pickle_serializer()
+        self.kp = Kafka_queue_producer('config/kafka.json')
 
     def _data_load(self):
         self.gd.download(folder='demo_reco',
@@ -39,7 +42,6 @@ class Demo_app():
             begin_t = time.time()
             # to do
             try:
-                print('app task...')
                 self._data_load()
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
@@ -49,14 +51,45 @@ class Demo_app():
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
+    def __make_reco(self, user_id):
+        if user_id in self._reco_user_id_dic:
+            cluster = self._reco_p_cluster_user[self._reco_user_id_dic[user_id]]
+        else:
+            cluster = [1./self._cluster for _ in range(self._cluster)]
+
+        dic = defaultdict(float)
+        for k in range(self._cluster):
+            for item, prob in self._reco_p_item_cluster[k].items():
+                dic[item] += prob*cluster[k]
+        return sorted(dic.items(), key=lambda x: -x[1])[:10]
+
+    def _make_reco(self, massege):
+        dic = defaultdict(float)
+        user_list = massege['value']['user_id']
+        for user_id in user_list:
+            dic[user_id] = self.__make_reco(user_id)
+        self.logger.info('Make {} users reco list...'.format(len(dic.keys())))
+        return dic
+
+    def _pack_dic_msg(self, val, msg_type):
+        dic_msg = {}
+        dic_msg['type'] = msg_type
+        dic_msg['value'] = val
+        dic_msg['timestamp'] = time.ctime()
+        dic_msg['servive'] = 'demo_personal_reco_system'
+        return dic_msg
+
     async def _feed(self, request, ws):
         self.logger.info('Start feed throw :{}:{}'.format(request.ip, request.port))
         while True:
             message = json.loads(await ws.recv())
             # to do
             try:
-                print('get: {}'.format('message'))
-                await ws.send(json.dumps({'demo app': 'hello world!!!'}))
+                if message['type'] == 'user_list':
+                    reco_user_list = self._make_reco(message)
+                    dic_msg = self._pack_dic_msg(val=reco_user_list, msg_type='reco_user_list')
+                await ws.send(json.dumps(dic_msg))
+                self.kp.push(dic_msg)
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 sys.exit(1)

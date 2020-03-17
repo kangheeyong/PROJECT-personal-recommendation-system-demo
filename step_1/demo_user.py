@@ -1,4 +1,3 @@
-import sys
 import time
 
 import json
@@ -59,11 +58,10 @@ class Demo_user():
             message = json.loads(await self.ws.recv())
             # to do
             try:
-                print(message)
+                print('message')
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 break
-                # sys.exit(1)
             # finishing
 
     async def _main(self):
