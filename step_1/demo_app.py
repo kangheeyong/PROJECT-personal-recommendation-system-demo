@@ -1,3 +1,4 @@
+import sys
 import time
 
 import json
@@ -22,7 +23,11 @@ class Demo_app():
         while True:
             begin_t = time.time()
             # to do
-            print('app task...')
+            try:
+                print('app task...')
+            except Exception as e:
+                self.logger.warning('Somthing is wrong : {}'.format(e))
+                sys.exit(1)
             # finishing
             sleep_t = max(0, self.opt.demo_app.sleep_t - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
@@ -33,8 +38,12 @@ class Demo_app():
         while True:
             message = json.loads(await ws.recv())
             # to do
-            print('get: {}'.format(message))
-            await ws.send(json.dumps({'demo app': 'hello world!!!'}))
+            try:
+                print('get: {}'.format(message))
+                await ws.send(json.dumps({'demo app': 'hello world!!!'}))
+            except Exception as e:
+                self.logger.warning('Somthing is wrong : {}'.format(e))
+                sys.exit(1)
             # finishing
 
     def run(self):

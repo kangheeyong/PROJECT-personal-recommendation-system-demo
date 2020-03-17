@@ -1,3 +1,5 @@
 *.un~
 *.swp
 *.so
+token.pickle
+cache

@@ -10,6 +10,11 @@
     "demo_user":{
         "url": "ws://localhost:8000/feed",
         "sleep_t": 15,
-        "waiting_t": 15
+        "waiting_t": 60,
+        "data":{
+            "folder": "demo_user_data",
+            "root_path": "cache",
+            "data_path": "cache/demo_user_data/demo_user.ps"
+        }
     }
 }
