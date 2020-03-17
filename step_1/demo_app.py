@@ -88,8 +88,8 @@ class Demo_app():
                 if message['type'] == 'user_list':
                     reco_user_list = self._make_reco(message)
                     dic_msg = self._pack_dic_msg(val=reco_user_list, msg_type='reco_user_list')
-                await ws.send(json.dumps(dic_msg))
-                self.kp.push(dic_msg)
+                    await ws.send(json.dumps(dic_msg))
+                    self.kp.push(dic_msg)
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 sys.exit(1)

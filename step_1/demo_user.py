@@ -33,7 +33,7 @@ class Demo_user():
 
     def _make_user_interest(self, u_list):
         u_idxs = u_list['user_id']
-        return {u_idx: list(np.argsort(-np.dot(self._p_cluster_user[u_idx], self._p_item_cluster))[:100]) for u_idx in u_idxs}
+        return {u_idx: list(np.argsort(-np.dot(self._p_cluster_user[u_idx], self._p_item_cluster))[:200]) for u_idx in u_idxs}
 
     def _pack_dic_msg(self, val, msg_type):
         dic_msg = {}
@@ -55,7 +55,6 @@ class Demo_user():
                 self.logger.info('demo user {} generate... '.format(len(u_list['user_id'])))
                 dic_msg = self._pack_dic_msg(val=u_list, msg_type='user_list')
                 await self.ws.send(json.dumps(dic_msg))
-
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 break
@@ -64,6 +63,29 @@ class Demo_user():
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
+    def _make_user_react(self, message):
+        reco_user_list = message['value']
+        result = []
+        for user_id in reco_user_list.keys():
+            stat = np.random.choice(['pass', 'choice', 'click'], p=[0.4, 0.3, 0.3])
+            if stat == 'pass':
+                continue
+            elif stat == 'choice' and int(user_id) in self._u_choice:
+                tmp = {'user_id': user_id,
+                       'item_id': self._u_choice[int(user_id)],
+                       'stat': 'choice'}
+                result.append(tmp)
+            elif stat == 'click' and int(user_id) in self._u_interest:
+                reco_item, _ = set(zip(*reco_user_list[user_id]))
+                interest_item = set(self._u_interest[int(user_id)])
+                candidate_item = list(set(reco_item) & interest_item)
+                if candidate_item:
+                    tmp = {'user_id': user_id,
+                           'item_id': np.random.choice(candidate_item),
+                           'stat': 'click'}
+                    result.append(tmp)
+        return result
+
     async def _consumer(self):
         self.logger.info('Start consumer...')
         while True:
@@ -71,6 +93,7 @@ class Demo_user():
             # to do
             try:
                 if message['type'] == 'reco_user_list':
+                    print(self._make_user_react(message))
                     print('message')
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
