@@ -1,17 +1,28 @@
 {
     "demo_app": {
-        "base":{
+        "sanic":{
             "host": "0.0.0.0",
             "port": 8000,
             "websocket_route": "/feed"
         },
-        "sleep_t": 60
+        "google_drive":{
+            "folder": "demo_reco",
+            "root_path": "cache",
+            "reco_item_cluster_path": "cache/demo_reco/reco_item_cluster.ps",
+            "reco_cluster_user_path": "cache/demo_reco/reco_cluster_user.ps"
+        },
+        "kafka": {
+            "data_center":{
+                "topic": "demo-data-center",
+                "bootstrap_servers": "0.0.0.0:9092",
+                "group_id": "user"
+            }
+        }
     },
     "demo_user":{
         "url": "ws://localhost:8000/feed",
         "sleep_t": 15,
-        "waiting_t": 60,
-        "data":{
+        "google_drive":{
             "folder": "demo_user_data",
             "root_path": "cache",
             "data_path": "cache/demo_user_data/demo_user.ps"
