@@ -1,4 +1,3 @@
-import sys
 import time
 from fire import Fire
 
@@ -46,14 +45,15 @@ class Kafka_dist():
         self.logger.info('Send {} message'.format(cnt))
 
     def run(self):
+        self.logger.info('Start...')
         while True:
             begin_t = time.time()
             # to do
             try:
                 self._run()
-            except Exception as e:
-                self.logger.warning('Somthing is wrong : {}'.format(e))
-                sys.exit(1)
+            except KeyboardInterrupt:
+                self.logger.warning('KeyboardInterrupt detect...')
+                break
             # finishing
             sleep_t = max(0, 30 - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))

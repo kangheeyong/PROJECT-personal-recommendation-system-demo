@@ -2,17 +2,20 @@
     "data_center":{
         "topic": "demo-data-center",
         "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "test1"
+        "group_id": "test11",
+        "auto_offset_reset": "latest"
     },
     "data_monitoring":{
         "topic": "demo-data-monitoring",
         "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "test1"
+        "group_id": "test11",
+        "auto_offset_reset": "latest"
     },
     "data_feedback":{
         "topic": "demo-data-feedback",
         "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "test1"
+        "group_id": "test11",
+        "auto_offset_reset": "latest"
     }
 }
 
