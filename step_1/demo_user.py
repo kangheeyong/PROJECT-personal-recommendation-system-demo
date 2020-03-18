@@ -111,19 +111,6 @@ class Demo_user():
                 break
             # finishing
 
-    async def _main(self):
-        self.logger.info('Start...')
-        while True:
-            try:
-                self._data_load()
-                self.ws = await websockets.connect(self._url)
-                await asyncio.gather(self._producer(),
-                                     self._consumer())
-            except Exception as e:
-                self.logger.warning('Restart... after {} secs -> {}'.format(60, e))
-                await asyncio.sleep(60)
-                continue
-
     def _data_load(self):
         self._gd.download(folder=self._opt.demo_user.google_drive.folder,
                           path=self._opt.demo_user.google_drive.root_path)
@@ -141,6 +128,19 @@ class Demo_user():
         self._item_idx = demo_user['item_idx']
         self._u_choice = {}
         self._u_interest = {}
+
+    async def _main(self):
+        self.logger.info('Start...')
+        while True:
+            try:
+                self._data_load()
+                self.ws = await websockets.connect(self._url)
+                await asyncio.gather(self._producer(),
+                                     self._consumer())
+            except Exception as e:
+                self.logger.warning('Restart... after {} secs -> {}'.format(60, e))
+                await asyncio.sleep(60)
+                continue
 
     def run(self):
         asyncio.run(self._main())
