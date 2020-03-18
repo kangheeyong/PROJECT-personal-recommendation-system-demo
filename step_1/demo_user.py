@@ -14,13 +14,13 @@ from Feynman.etc.util import Config, get_logger
 class Demo_user():
     def __init__(self):
         self.logger = get_logger()
-        self.opt = Config(open('config/demo.json').read())
-        self.url = self.opt.demo_user.url
-        self.gd = Google_drive('token.pickle')
-        self.ps = Pickle_serializer()
+        self._opt = Config(open('config/demo.json').read())
+        self._url = self._opt.demo_user.url
+        self._gd = Google_drive('token.pickle')
+        self._ps = Pickle_serializer()
 
     def _make_user_list(self):
-        user_num = self._traffic/24/60/60*self.opt.demo_user.sleep_t
+        user_num = self._traffic/24/60/60*self._opt.demo_user.sleep_t
         user_num = np.random.poisson(user_num)
         u_idxs = np.random.choice(range(self._user_count), user_num, p=self._p_user[0])
         return {'user_id': list(map(int, u_idxs))}
@@ -59,13 +59,13 @@ class Demo_user():
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 break
             # finishing
-            sleep_t = max(0, self.opt.demo_user.sleep_t - int(time.time() - begin_t))
+            sleep_t = max(0, self._opt.demo_user.sleep_t - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
     def _make_user_react(self, message):
-        reco_user_list = message['value']
         result = []
+        reco_user_list = message['value']
         pss, choice, click, unclick = 0, 0, 0, 0
         for user_id in reco_user_list.keys():
             stat = np.random.choice(['pass', 'choice', 'click'], p=[0.4, 0.3, 0.3])
@@ -116,19 +116,19 @@ class Demo_user():
         while True:
             try:
                 self._data_load()
-                self.ws = await websockets.connect(self.url)
+                self.ws = await websockets.connect(self._url)
                 await asyncio.gather(self._producer(),
                                      self._consumer())
             except Exception as e:
-                self.logger.warning('Restart... after {} secs -> {}'.format(self.opt.demo_user.waiting_t, e))
-                await asyncio.sleep(self.opt.demo_user.waiting_t)
+                self.logger.warning('Restart... after {} secs -> {}'.format(60, e))
+                await asyncio.sleep(60)
                 continue
 
     def _data_load(self):
-        self.gd.download(folder=self.opt.demo_user.data.folder,
-                         path=self.opt.demo_user.data.root_path)
+        self._gd.download(folder=self._opt.demo_user.google_drive.folder,
+                          path=self._opt.demo_user.google_drive.root_path)
 
-        demo_user = self.ps.load(self.opt.demo_user.data.data_path)
+        demo_user = self._ps.load(self._opt.demo_user.google_drive.data_path)
 
         self._traffic = demo_user['traffic']
         self._user_count = demo_user['user_count']

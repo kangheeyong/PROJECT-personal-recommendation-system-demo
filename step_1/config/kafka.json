@@ -1,7 +1,0 @@
-{
-    "kafka_test": {
-        "topic": "demo-data-center",
-        "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "user"
-    }
-}

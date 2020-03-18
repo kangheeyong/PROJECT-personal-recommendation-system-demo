@@ -19,17 +19,17 @@ app = Sanic('Demo_app')
 class Demo_app():
     def __init__(self):
         self.logger = get_logger()
-        self.opt = Config(open('config/demo.json').read())
-        self.gd = Google_drive('token.pickle')
-        self.ps = Pickle_serializer()
-        self.kp = Kafka_queue_producer('config/kafka.json')
+        self._opt = Config(open('config/demo.json').read())
+        self._gd = Google_drive('token.pickle')
+        self._ps = Pickle_serializer()
+        self._kp = Kafka_queue_producer(self._opt.demo_app.kafka.data_center)
 
     def _data_load(self):
-        self.gd.download(folder='demo_reco',
-                         path='cache')
+        self._gd.download(folder=self._opt.demo_app.google_drive.folder,
+                         path=self._opt.demo_app.google_drive.root_path)
 
-        reco_item_cluster = self.ps.load('cache/demo_reco/reco_item_cluster.ps')
-        reco_cluster_user = self.ps.load('cache/demo_reco/reco_cluster_user.ps')
+        reco_item_cluster = self._ps.load(self._opt.demo_app.google_drive.reco_item_cluster_path)
+        reco_cluster_user = self._ps.load(self._opt.demo_app.google_drive.reco_cluster_user_path)
 
         self._reco_p_item_cluster = reco_item_cluster['reco_p_item_cluster']
         self._reco_user_id_dic = reco_cluster_user['reco_user_id_dic']
@@ -47,7 +47,7 @@ class Demo_app():
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 sys.exit(1)
             # finishing
-            sleep_t = max(0, self.opt.demo_app.sleep_t - int(time.time() - begin_t))
+            sleep_t = max(0, 60 - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
@@ -90,7 +90,9 @@ class Demo_app():
                     reco_user_list = self._make_reco(message)
                     dic_msg = self._pack_dic_msg(val=reco_user_list, msg_type='reco_user_list')
                     await ws.send(json.dumps(dic_msg))
-                    self.kp.push(dic_msg)
+                    self._kp.push(dic_msg)
+                elif message['type'] == 'user_feedback':
+                    self._kp.push(message)
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 sys.exit(1)
@@ -98,8 +100,8 @@ class Demo_app():
 
     def run(self):
         app.add_task(self._task)
-        app.add_websocket_route(self._feed, self.opt.demo_app.base.websocket_route)
-        app.run(host=self.opt.demo_app.base.host, port=self.opt.demo_app.base.port)
+        app.add_websocket_route(self._feed, self._opt.demo_app.sanic.websocket_route)
+        app.run(host=self._opt.demo_app.sanic.host, port=self._opt.demo_app.sanic.port)
 
 
 if __name__ == '__main__':
