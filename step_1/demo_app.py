@@ -63,11 +63,12 @@ class Demo_app():
                 dic[item] += prob*cluster[k]
         return sorted(dic.items(), key=lambda x: -x[1])[:10]
 
-    def _make_reco(self, massege):
+    def _make_reco(self, massege, bucket='test_default'):
         dic = defaultdict(float)
         user_list = massege['value']['user_id']
         for user_id in user_list:
-            dic[user_id] = self.__make_reco(user_id)
+            dic[user_id] = {'list': self.__make_reco(user_id),
+                            'bucket': bucket}
         self.logger.info('Make {} users reco list...'.format(len(dic.keys())))
         return dic
 

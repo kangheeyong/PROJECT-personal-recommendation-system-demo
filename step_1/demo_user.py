@@ -33,7 +33,7 @@ class Demo_user():
 
     def _make_user_interest(self, u_list):
         u_idxs = u_list['user_id']
-        return {u_idx: list(np.argsort(-np.dot(self._p_cluster_user[u_idx], self._p_item_cluster))[:200]) for u_idx in u_idxs}
+        return {u_idx: list(np.argsort(-np.dot(self._p_cluster_user[u_idx], self._p_item_cluster))[:1000]) for u_idx in u_idxs}
 
     def _pack_dic_msg(self, val, msg_type):
         dic_msg = {}
@@ -66,24 +66,34 @@ class Demo_user():
     def _make_user_react(self, message):
         reco_user_list = message['value']
         result = []
+        pss, choice, click, unclick = 0, 0, 0, 0
         for user_id in reco_user_list.keys():
             stat = np.random.choice(['pass', 'choice', 'click'], p=[0.4, 0.3, 0.3])
             if stat == 'pass':
+                pss += 1
                 continue
             elif stat == 'choice' and int(user_id) in self._u_choice:
                 tmp = {'user_id': user_id,
-                       'item_id': self._u_choice[int(user_id)],
+                       'item_id': str(self._u_choice[int(user_id)]),
+                       'bucket': reco_user_list[user_id]['bucket'],
                        'stat': 'choice'}
+                choice += 1
                 result.append(tmp)
             elif stat == 'click' and int(user_id) in self._u_interest:
-                reco_item, _ = set(zip(*reco_user_list[user_id]))
+                reco_item = set(list(zip(*reco_user_list[user_id]['list']))[0])
                 interest_item = set(self._u_interest[int(user_id)])
-                candidate_item = list(set(reco_item) & interest_item)
+                candidate_item = list(reco_item.intersection(interest_item))
                 if candidate_item:
                     tmp = {'user_id': user_id,
-                           'item_id': np.random.choice(candidate_item),
+                           'item_id': str(np.random.choice(candidate_item)),
+                           'bucket': reco_user_list[user_id]['bucket'],
                            'stat': 'click'}
+                    click += 1
                     result.append(tmp)
+                else:
+                    unclick += 1
+        self.logger.info('Make user feedback -> pass: {}, choice: {}, click: {}, unclick: {}'
+                         .format(pss, choice, click, unclick))
         return result
 
     async def _consumer(self):
@@ -93,8 +103,9 @@ class Demo_user():
             # to do
             try:
                 if message['type'] == 'reco_user_list':
-                    print(self._make_user_react(message))
-                    print('message')
+                    u_feedback = self._make_user_react(message)
+                    dic_msg = self._pack_dic_msg(val=u_feedback, msg_type='user_feedback')
+                    await self.ws.send(json.dumps(dic_msg))
             except Exception as e:
                 self.logger.warning('Somthing is wrong : {}'.format(e))
                 break
@@ -106,10 +117,8 @@ class Demo_user():
             try:
                 self._data_load()
                 self.ws = await websockets.connect(self.url)
-                await asyncio.gather(
-                    self._producer(),
-                    self._consumer()
-                )
+                await asyncio.gather(self._producer(),
+                                     self._consumer())
             except Exception as e:
                 self.logger.warning('Restart... after {} secs -> {}'.format(self.opt.demo_user.waiting_t, e))
                 await asyncio.sleep(self.opt.demo_user.waiting_t)
