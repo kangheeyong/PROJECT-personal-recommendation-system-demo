@@ -33,7 +33,8 @@ class Demo_user():
 
     def _make_user_interest(self, u_list):
         u_idxs = u_list['user_id']
-        return {u_idx: list(np.argsort(-np.dot(self._p_cluster_user[u_idx], self._p_item_cluster))[:1000]) for u_idx in u_idxs}
+        u_max_interest = self._opt.demo_user.max_interest
+        return {u_idx: list(np.argsort(-np.dot(self._p_cluster_user[u_idx], self._p_item_cluster))[:u_max_interest]) for u_idx in u_idxs}
 
     def _pack_dic_msg(self, val, msg_type):
         dic_msg = {}
@@ -49,6 +50,8 @@ class Demo_user():
             begin_t = time.time()
             # to do
             try:
+                self._opt = Config(open('config/demo.json').read())
+
                 u_list = self._make_user_list()
                 self._u_choice = self._make_user_choice(u_list)
                 self._u_interest = self._make_user_interest(u_list)

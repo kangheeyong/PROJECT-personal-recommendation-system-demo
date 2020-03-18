@@ -1,15 +1,33 @@
 {
-    "demo_app": {
+    "demo_app":{
         "sanic":{
             "host": "0.0.0.0",
             "port": 8000,
             "websocket_route": "/feed"
         },
-        "google_drive":{
-            "folder": "demo_reco",
-            "root_path": "cache",
-            "reco_item_cluster_path": "cache/demo_reco/reco_item_cluster.ps",
-            "reco_cluster_user_path": "cache/demo_reco/reco_cluster_user.ps"
+        "bucket":{
+            "test":{
+                "name": "test_default",
+                "version": "0.0.1",
+                "ratio": 0.6,
+                "google_drive":{
+                    "folder": "demo_reco",
+                    "root_path": "cache",
+                    "reco_item_cluster_path": "cache/demo_reco/reco_item_cluster.ps",
+                    "reco_cluster_user_path": "cache/demo_reco/reco_cluster_user.ps"
+                }
+            },
+            "test1":{
+                "name": "test1",
+                "version": "0.0.1",
+                "ratio": 0.4,
+                "google_drive":{
+                    "folder": "demo_reco",
+                    "root_path": "cache",
+                    "reco_item_cluster_path": "cache/demo_reco/reco_item_cluster.ps",
+                    "reco_cluster_user_path": "cache/demo_reco/reco_cluster_user.ps"
+                }
+            }
         },
         "kafka": {
             "data_center":{
@@ -22,6 +40,7 @@
     "demo_user":{
         "url": "ws://localhost:8000/feed",
         "sleep_t": 15,
+        "max_interest": 1000,
         "google_drive":{
             "folder": "demo_user_data",
             "root_path": "cache",
