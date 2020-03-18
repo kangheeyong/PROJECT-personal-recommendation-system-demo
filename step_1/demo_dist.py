@@ -35,6 +35,7 @@ class Kafka_dist():
                         temp['datatime'] = data['datatime']
                         if temp['stat'] == 'click':
                             cnt += 1
+                            self._kp_data_feedback.push(temp)
                             self._kp_data_monitoring.push(temp)
                         elif temp['stat'] == 'choice':
                             cnt += 1
