@@ -7,9 +7,6 @@
 
 ## 개발 환경
 - Python 3.7.0 (default, Mar  6 2020, 12:45:48) [GCC 5.4.0 20160609]
-- docker image
-  - `docker pull cagojeiger/project-leopard`
-  - https://hub.docker.com/r/cagojeiger/project-leopard
 - 개인용 library
   - LIB-Feynman(https://github.com/kangheeyong/LIB-Feynman)
 
