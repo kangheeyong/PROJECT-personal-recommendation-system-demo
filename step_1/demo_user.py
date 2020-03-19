@@ -16,7 +16,7 @@ class Demo_user():
         self.logger = get_logger()
         self._opt = Config(open('config/demo.json').read())
         self._url = self._opt.demo_user.url
-        self._gd = Google_drive('token.pickle')
+        self._gd = Google_drive('~/token.pickle')
         self._ps = Pickle_serializer()
 
     def _make_user_list(self):

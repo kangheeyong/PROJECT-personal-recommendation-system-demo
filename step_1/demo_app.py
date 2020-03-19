@@ -21,7 +21,7 @@ class Demo_app():
     def __init__(self):
         self.logger = get_logger()
         self._opt = Config(open('config/demo.json').read())
-        self._gd = Google_drive('token.pickle')
+        self._gd = Google_drive('~/token.pickle')
         self._ps = Pickle_serializer()
         self._kp = Kafka_queue_producer(self._opt.demo_app.kafka.data_center)
 
