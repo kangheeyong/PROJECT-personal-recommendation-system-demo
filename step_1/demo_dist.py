@@ -14,7 +14,7 @@ class Kafka_dist():
         self._kp_data_monitoring = Kafka_queue_producer(self._opt.data_monitoring)
 
     def _run(self):
-        cnt = 0
+        list_monitoring, list_feedback = [], []
         for data in self._kc_data_center.pop():
             try:
                 if data['value']['type'] == 'reco_user_list':
@@ -26,23 +26,21 @@ class Kafka_dist():
                                     'stat': 'imp',
                                     'bucket': value['bucket'],
                                     'datatime': data['datatime']}
-                            cnt += 1
-                            self._kp_data_monitoring.push(temp)
+                            list_monitoring.append(temp)
                 elif data['value']['type'] == 'user_feedback':
                     for temp in data['value']['value']:
                         temp['type'] = 'user_feedback'
                         temp['datatime'] = data['datatime']
                         if temp['stat'] == 'click':
-                            cnt += 1
-                            self._kp_data_feedback.push(temp)
-                            self._kp_data_monitoring.push(temp)
+                            list_monitoring.append(temp)
+                            list_feedback.append(temp)
                         elif temp['stat'] == 'choice':
-                            cnt += 1
-                            self._kp_data_feedback.push(temp)
+                            list_feedback.append(temp)
             except Exception as e:
                 self.logger.info('Somthing is wrong -> {}'.format(e))
                 continue
-        self.logger.info('Send {} message'.format(cnt))
+        self._kp_data_monitoring.push(list_monitoring)
+        self._kp_data_feedback.push(list_feedback)
 
     def run(self):
         self.logger.info('Start...')
