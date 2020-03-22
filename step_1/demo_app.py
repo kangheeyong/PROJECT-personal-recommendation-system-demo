@@ -93,7 +93,7 @@ class Demo_app():
         dic_msg = {}
         dic_msg['type'] = msg_type
         dic_msg['value'] = val
-        dic_msg['timestamp'] = time.ctime()
+        dic_msg['timestamp'] = time.time()
         dic_msg['servive'] = 'demo_personal_reco_system'
         return dic_msg
 
