@@ -1,21 +1,34 @@
 {
-    "data_center":{
-        "topic": "demo-data-center",
-        "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "test11",
-        "auto_offset_reset": "latest"
+    "kafka":{
+        "data_center":{
+            "topic": "demo-data-center",
+            "bootstrap_servers": "0.0.0.0:9092",
+            "group_id": "test11",
+            "auto_offset_reset": "latest"
+        }
     },
-    "data_monitoring":{
-        "topic": "demo-data-monitoring",
-        "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "test11",
-        "auto_offset_reset": "latest"
-    },
-    "data_feedback":{
-        "topic": "demo-data-feedback",
-        "bootstrap_servers": "0.0.0.0:9092",
-        "group_id": "test11",
-        "auto_offset_reset": "latest"
+    "mongodb":{
+        "data_click":{
+            "server": "mongodb://127.0.0.1:27017",
+            "database": "demo_data",
+            "collection": "click",
+            "ttl_enable": true,
+            "ttl_t": 120
+        },
+        "data_imp":{
+            "server": "mongodb://127.0.0.1:27017",
+            "database": "demo_data",
+            "collection": "imp",
+            "ttl_enable": true,
+            "ttl_t": 120
+        },
+        "data_choice":{
+            "server": "mongodb://127.0.0.1:27017",
+            "database": "demo_data",
+            "collection": "choice",
+            "ttl_enable": true,
+            "ttl_t": 120
+        }
     }
 }
 

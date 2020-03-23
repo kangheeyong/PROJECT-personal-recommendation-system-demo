@@ -2,19 +2,20 @@ import time
 from fire import Fire
 
 from Feynman.etc.util import Config, get_logger
-from Feynman.database import Kafka_queue_producer, Kafka_queue_consumer
+from Feynman.database import Kafka_queue_consumer, Mongodb
 
 
 class Kafka_dist():
     def __init__(self):
         self.logger = get_logger()
         self._opt = Config(open('config/demo_dist.json').read())
-        self._kc_data_center = Kafka_queue_consumer(self._opt.data_center)
-        self._kp_data_feedback = Kafka_queue_producer(self._opt.data_feedback)
-        self._kp_data_monitoring = Kafka_queue_producer(self._opt.data_monitoring)
+        self._kc_data_center = Kafka_queue_consumer(self._opt.kafka.data_center)
+        self._mg_data_click = Mongodb(self._opt.mongodb.data_click)
+        self._mg_data_imp = Mongodb(self._opt.mongodb.data_imp)
+        self._mg_data_choice = Mongodb(self._opt.mongodb.data_choice)
 
     def _run(self):
-        list_monitoring, list_feedback = [], []
+        list_click, list_imp, list_choice = [], [], []
         for data in self._kc_data_center.pop():
             try:
                 if data['value']['type'] == 'reco_user_list':
@@ -26,21 +27,21 @@ class Kafka_dist():
                                     'stat': 'imp',
                                     'bucket': value['bucket'],
                                     'datatime': data['datatime']}
-                            list_monitoring.append(temp)
+                            list_imp.append(temp)
                 elif data['value']['type'] == 'user_feedback':
                     for temp in data['value']['value']:
                         temp['type'] = 'user_feedback'
                         temp['datatime'] = data['datatime']
                         if temp['stat'] == 'click':
-                            list_monitoring.append(temp)
-                            list_feedback.append(temp)
+                            list_click.append(temp)
                         elif temp['stat'] == 'choice':
-                            list_feedback.append(temp)
+                            list_choice.append(temp)
             except Exception as e:
                 self.logger.info('Somthing is wrong -> {}'.format(e))
                 continue
-        self._kp_data_monitoring.push(list_monitoring)
-        self._kp_data_feedback.push(list_feedback)
+        self._mg_data_click.insert(list_click)
+        self._mg_data_imp.insert(list_imp)
+        self._mg_data_choice.insert(list_choice)
 
     def run(self):
         self.logger.info('Start...')
@@ -49,6 +50,7 @@ class Kafka_dist():
             # to do
             try:
                 self._run()
+                break
             except KeyboardInterrupt:
                 self.logger.warning('KeyboardInterrupt detect...')
                 break
