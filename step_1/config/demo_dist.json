@@ -4,7 +4,7 @@
             "topic": "demo-data-center",
             "bootstrap_servers": "0.0.0.0:9092",
             "group_id": "test11",
-            "auto_offset_reset": "latest"
+            "auto_offset_reset": "earliest"
         }
     },
     "mongodb":{
@@ -13,21 +13,21 @@
             "database": "demo_data",
             "collection": "click",
             "ttl_enable": true,
-            "ttl_t": 120
+            "ttl_t": 604800
         },
         "data_imp":{
             "server": "mongodb://127.0.0.1:27017",
             "database": "demo_data",
             "collection": "imp",
             "ttl_enable": true,
-            "ttl_t": 120
+            "ttl_t": 604800
         },
         "data_choice":{
             "server": "mongodb://127.0.0.1:27017",
             "database": "demo_data",
             "collection": "choice",
             "ttl_enable": true,
-            "ttl_t": 120
+            "ttl_t": 604800
         }
     }
 }

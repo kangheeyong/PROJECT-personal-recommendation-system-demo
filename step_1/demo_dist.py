@@ -50,7 +50,6 @@ class Kafka_dist():
             # to do
             try:
                 self._run()
-                break
             except KeyboardInterrupt:
                 self.logger.warning('KeyboardInterrupt detect...')
                 break
