@@ -26,12 +26,12 @@ class Kafka_dist():
                                     'item_id': str(item),
                                     'stat': 'imp',
                                     'bucket': value['bucket'],
-                                    'datatime': data['datatime']}
+                                    'timestamp': data['value']['timestamp']}
                             list_imp.append(temp)
                 elif data['value']['type'] == 'user_feedback':
                     for temp in data['value']['value']:
                         temp['type'] = 'user_feedback'
-                        temp['datatime'] = data['datatime']
+                        temp['timestamp'] = data['value']['timestamp']
                         if temp['stat'] == 'click':
                             list_click.append(temp)
                         elif temp['stat'] == 'choice':
