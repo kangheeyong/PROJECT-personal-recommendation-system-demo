@@ -17,15 +17,15 @@
                     "reco_cluster_user_path": "cache/demo_reco/reco_cluster_user.ps"
                 }
             },
-            "test1":{
-                "name": "test1",
+            "alpha":{
+                "name": "demo_gc",
                 "version": "0.0.1",
                 "ratio": 0.4,
                 "google_drive":{
-                    "folder": "demo_reco",
+                    "folder": "demo_gc",
                     "root_path": "cache",
-                    "reco_item_cluster_path": "cache/demo_reco/reco_item_cluster.ps",
-                    "reco_cluster_user_path": "cache/demo_reco/reco_cluster_user.ps"
+                    "reco_item_cluster_path": "cache/demo_gc/reco_item_cluster.ps",
+                    "reco_cluster_user_path": "cache/demo_gc/reco_cluster_user.ps"
                 }
             }
         },

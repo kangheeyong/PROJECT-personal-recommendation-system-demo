@@ -34,7 +34,7 @@ class base():
         for bucket in self._mg_data_click._collection.distinct('bucket'):
             click = self._mg_data_click.count_documents(self._time_between(now_t-timedelta(hours=1, minutes=0), now_t, bucket))
             imp = self._mg_data_imp.count_documents(self._time_between(now_t-timedelta(hours=1, minutes=0), now_t, bucket))
-            self.slack.chat.post_message(channal, 'bucket : {}, ctr : {}'.format(bucket, click/imp))
+            self.slack.chat.post_message(channal, 'bucket : {}, ctr : {}'.format(bucket, click/(imp + 0.1)))
 
     async def _execute_bot(self):
         self.logger.info('start execute_bot')
