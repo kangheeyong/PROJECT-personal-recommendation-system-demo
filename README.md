@@ -7,6 +7,7 @@
 ## 요약 
 - 개인용 toy system([toy system 프로그램 관련 요약](https://github.com/kangheeyong/PROJECT-personal-recommendation-system-demo/issues/1#issuecomment-604235209))
 - 가상 유저는 확률적 그래프 모델로 설계([가상 유저 생성 방법](https://github.com/kangheeyong/PROJECT-personal-recommendation-system-demo/issues/1#issuecomment-604235101))
+- 일간 이용자 수 20만명으로 설정(유저 최대 100만명, 아이템 최대 10만개)
 - 가상 유저와 추천 시스템의 연동은 sanic 사용
 - micro service architecture의 파이프라인을 위한 google drive, Kafka, MongoDB 사용
 - supervisor로 프로세스를 관리하고 slack으로 알림을 받음
