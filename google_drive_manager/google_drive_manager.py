@@ -53,8 +53,7 @@ class template_manager():
     async def _cmd_recv(self, ws, path):
         arg = await ws.recv()
         self.logger.info('Start consumer... at {}:{}{} {}'.format(ws.host, ws.port, path, arg))
-        func = getattr(self, 'do_' + path[1:])
-        result = func(arg)
+        result = getattr(self.file_data, path[1:])
         await ws.send(json.dumps(result))
 
     async def _main(self):
