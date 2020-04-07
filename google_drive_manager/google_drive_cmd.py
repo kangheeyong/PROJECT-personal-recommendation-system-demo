@@ -20,16 +20,31 @@ version 0.0.1
         data_dic = self._send('data_dic', arg)
         adj_dic = self._send('adj_dic', arg)
         for key in all_dic.keys():
-            print_tree(key, adj_dic)
+            print_tree(key,
+                       adj_dic,
+                       func=lambda x: '{}({}) - {}'
+                       .format(data_dic[x]['name'], data_dic[x]['id'], data_dic[x]['createdTime']))
+            print('')
 
     def do_ls(self, arg):
         root = self._send('root', arg)
         data_dic = self._send('data_dic', arg)
         adj_dic = self._send('adj_dic', arg)
-        print_tree(root, adj_dic)
+        print_tree(root,
+                   adj_dic,
+                   func=lambda x: '{}({}) - {}'
+                   .format(data_dic[x]['name'], data_dic[x]['id'], data_dic[x]['createdTime']))
+        print('')
+
+    def do_remove_list(self, arg):
+        data_dic = self._send('data_dic', arg)
+        remove_list = self._send('remove_list', arg)
+        for x in remove_list:
+            print('{}({})'.format(data_dic[x]['name'], data_dic[x]['id']))
 
     def do_upload(self, arg):
-        print('not yet')
+        dummy = self._send('update', arg)
+        print('not yet', dummy)
 
     def do_download(self, arg):
         print('not yet')

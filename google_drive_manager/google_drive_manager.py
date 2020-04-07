@@ -32,10 +32,17 @@ class template_manager():
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
+    def do_update(self, arg):
+        return 'dumy'
+
     async def _cmd_recv(self, ws, path):
         arg = await ws.recv()
         self.logger.info('Start consumer... at {}:{}{} {}'.format(ws.host, ws.port, path, arg))
-        result = getattr(self.file_data, path[1:])
+        try:
+            result = getattr(self.file_data, path[1:])
+        except AttributeError:
+            func = getattr(self, 'do_'+path[1:])
+            result = func(arg)
         await ws.send(json.dumps(result))
 
     async def _main(self):
