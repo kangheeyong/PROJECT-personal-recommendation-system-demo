@@ -32,24 +32,6 @@ class template_manager():
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
-    def do_remove_set(self, arg):
-        return self.file_data.remove_set
-
-    def do_all_dic(self, arg):
-        return self.file_data.all_dic
-
-    def do_view_dic(self, arg):
-        return self.file_data.view_dic
-
-    def do_adj_dic(self, arg):
-        return self.file_data.adj_dic
-
-    def do_data_dic(self, arg):
-        return self.file_data.data_dic
-
-    def do_root(self, arg):
-        return self.file_data.root
-
     async def _cmd_recv(self, ws, path):
         arg = await ws.recv()
         self.logger.info('Start consumer... at {}:{}{} {}'.format(ws.host, ws.port, path, arg))
