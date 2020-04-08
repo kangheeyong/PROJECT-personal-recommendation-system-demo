@@ -23,19 +23,19 @@ class template_manager():
         while True:
             begin_t = time.time()
             self._check()
-            sleep_t = max(0, 600 - int(time.time() - begin_t))
+            sleep_t = max(0, 60 - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
 
     async def _cmd_recv(self, ws, path):
         arg = await ws.recv()
         self.logger.info('Start consumer... at {}:{}{} {}'.format(ws.host, ws.port, path, arg))
-        self._gd.update_list()
         try:
             result = getattr(self._gd._file_data, path[1:])
         except AttributeError:
             func = getattr(self._gd, path[1:])
             result = func(arg)
+            self._gd.update_list()
         await ws.send(json.dumps(result))
 
     async def _main(self):
