@@ -12,6 +12,7 @@
 - micro service architecture의 파이프라인을 위한 google drive, Kafka, MongoDB 사용
 - supervisor로 프로세스를 관리하고 slack으로 알림을 받음
 - 시스템 환경은 docker hub로 관리
+- google drive는 별도의 툴을 만들어 관리
 
 
 
