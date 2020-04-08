@@ -29,32 +29,55 @@ version 0.0.1
     def do_ls(self, arg):
         root = self._send('root', arg)
         data_dic = self._send('data_dic', arg)
-        adj_dic = self._send('adj_dic', arg)
+        view_dic = self._send('view_dic', arg)
         print_tree(root,
-                   adj_dic,
+                   view_dic,
                    func=lambda x: '{}({}) - {}'
                    .format(data_dic[x]['name'], data_dic[x]['id'], data_dic[x]['createdTime']))
+        print('')
+
+    def do_info_id(self, arg):
+        data_dic = self._send('data_dic', arg)
+        if arg not in data_dic:
+            print('Can not find id')
+        else:
+            print(data_dic[arg])
         print('')
 
     def do_remove_list(self, arg):
         data_dic = self._send('data_dic', arg)
         remove_list = self._send('remove_list', arg)
         for x in remove_list:
-            print('{}({})'.format(data_dic[x]['name'], data_dic[x]['id']))
+            print('{}({}) - {}'.format(data_dic[x]['name'], data_dic[x]['id'], data_dic[x]['createdTime']))
+        print('')
 
     def do_upload(self, arg):
-        dummy = self._send('update', arg)
-        print('not yet', dummy)
+        print('not yet', arg)
 
     def do_download(self, arg):
         print('not yet')
 
+    def do_mkdir(self, arg):
+        print('not yet')
+
+    def do_rm(self, arg):
+        print('not yet')
+
+    def do_empty_remove_list(self, arg):
+        result = self._send('empty_list', arg)
+        print(result)
+        print('')
+
     def _send(self, cmd, arg):
         uri = 'ws://localhost:8765/'+cmd
-        ws = create_connection(uri)
-        ws.send(arg)
-        result = ws.recv()
-        ws.close()
+        try:
+            ws = create_connection(uri)
+            ws.send(arg)
+            result = ws.recv()
+            ws.close()
+        except Exception as e:
+            print(e)
+            return []
         return json.loads(result)
 
     def run(self):
