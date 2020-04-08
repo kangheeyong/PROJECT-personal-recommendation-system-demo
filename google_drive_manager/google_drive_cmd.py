@@ -40,7 +40,9 @@ version 0.0.1
         data_dic = self._send('data_dic', arg)
         if arg not in data_dic:
             print('Can not find id')
-        print(data_dic[arg])
+        else:
+            print(data_dic[arg])
+        print('')
 
     def do_remove_list(self, arg):
         data_dic = self._send('data_dic', arg)
@@ -50,14 +52,12 @@ version 0.0.1
         print('')
 
     def do_upload(self, arg):
-        dummy = self._send('update', arg)
-        print('not yet', dummy)
+        print('not yet', arg)
 
     def do_download(self, arg):
         print('not yet')
 
     def do_mkdir(self, arg):
-
         print('not yet')
 
     def do_rm(self, arg):

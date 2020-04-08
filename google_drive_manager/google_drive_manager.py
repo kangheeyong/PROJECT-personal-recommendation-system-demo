@@ -6,7 +6,7 @@ import json
 from fire import Fire
 
 from Feynman.etc.util import get_logger
-from Feynman.cloud import Google_drive_data, Google_drive
+from Feynman.cloud.google_drive_v2 import Google_drive
 
 
 class template_manager():
@@ -16,20 +16,16 @@ class template_manager():
 
     def _check(self):
         self._gd.update_list()
+        self._gd.empty_list()
 
     async def _task(self):
         self.logger.info('Start task...')
         while True:
             begin_t = time.time()
-
             self._check()
-
-            sleep_t = max(0, 60 - int(time.time() - begin_t))
+            sleep_t = max(0, 600 - int(time.time() - begin_t))
             self.logger.info('Sleep {} secs before next start'.format(sleep_t))
             await asyncio.sleep(sleep_t)
-
-    def do_update(self, arg):
-        return 'dumy'
 
     async def _cmd_recv(self, ws, path):
         arg = await ws.recv()
