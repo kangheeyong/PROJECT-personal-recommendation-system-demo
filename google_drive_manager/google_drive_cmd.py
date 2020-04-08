@@ -60,8 +60,10 @@ version 0.0.1
     def do_mkdir(self, arg):
         print('not yet')
 
-    def do_rm(self, arg):
-        print('not yet')
+    def do_remove(self, arg):
+        result = self._send('remove', arg)
+        print(result)
+        print('')
 
     def do_empty_remove_list(self, arg):
         result = self._send('empty_list', arg)
