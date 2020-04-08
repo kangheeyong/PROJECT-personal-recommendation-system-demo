@@ -6,20 +6,16 @@ import json
 from fire import Fire
 
 from Feynman.etc.util import get_logger
-from Feynman.cloud import Google_drive_data_base
+from Feynman.cloud import Google_drive_data, Google_drive
 
 
 class template_manager():
     def __init__(self):
         self.logger = get_logger()
+        self._gd = Google_drive()
 
     def _check(self):
-        import pickle
-        with open('google_drive_data_example.pickle', 'rb') as f:
-            data = pickle.load(f)
-        self.file_data = Google_drive_data_base(data)
-        self.file_data.pruning_overlap_file()
-        self.file_data.pruning_zombie_file()
+        self._gd.update_list()
 
     async def _task(self):
         self.logger.info('Start task...')
@@ -38,10 +34,11 @@ class template_manager():
     async def _cmd_recv(self, ws, path):
         arg = await ws.recv()
         self.logger.info('Start consumer... at {}:{}{} {}'.format(ws.host, ws.port, path, arg))
+        self._gd.update_list()
         try:
-            result = getattr(self.file_data, path[1:])
+            result = getattr(self._gd._file_data, path[1:])
         except AttributeError:
-            func = getattr(self, 'do_'+path[1:])
+            func = getattr(self._gd, path[1:])
             result = func(arg)
         await ws.send(json.dumps(result))
 
