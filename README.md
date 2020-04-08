@@ -24,3 +24,4 @@
 
 ## 개발 과정 이슈
 - [step 1 기록들](https://github.com/kangheeyong/PROJECT-personal-recommendation-system-demo/issues/1#issuecomment-597509991)
+- [구글 드라이브 관리 툴 관련 기록](https://github.com/kangheeyong/PROJECT-personal-recommendation-system-demo/issues/4)
