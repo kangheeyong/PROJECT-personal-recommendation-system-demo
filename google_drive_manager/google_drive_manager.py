@@ -13,10 +13,11 @@ class template_manager():
     def __init__(self):
         self.logger = get_logger()
         self._gd = Google_drive()
+        self._gd.update_list()
 
     def _check(self):
-        self._gd.update_list()
         self._gd.empty_list()
+        self._gd.update_list()
 
     async def _task(self):
         self.logger.info('Start task...')
